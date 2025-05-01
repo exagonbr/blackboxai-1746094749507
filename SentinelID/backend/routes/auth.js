@@ -1,6 +1,6 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
-const pool = require('../db');
+const db = require('../db');
 
 const router = express.Router();
 
@@ -12,9 +12,7 @@ router.post('/login', async (req, res) => {
   }
 
   try {
-    const connection = await pool.getConnection();
-    const [rows] = await connection.query('SELECT * FROM users WHERE username = ?', [username]);
-    connection.release();
+    const rows = await db.all('SELECT * FROM users WHERE username = ?', [username]);
 
     if (rows.length === 0) {
       return res.status(401).json({ error: 'Invalid username or password' });
