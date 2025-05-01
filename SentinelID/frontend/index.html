@@ -56,11 +56,30 @@
           }
         }, [isLoggedIn]);
 
-        function handleLogin(e) {
+        async function handleLogin(e) {
           e.preventDefault();
-          // TODO: Implement real authentication with backend
-          if (username && password) {
+          try {
+            const response = await fetch('/api/auth/login', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ username, password }),
+            });
+
+            if (!response.ok) {
+              const error = await response.json();
+              setAlerts(error.error || 'Login failed');
+              setTimeout(() => setAlerts(''), 5000);
+              return;
+            }
+
+            const data = await response.json();
             setIsLoggedIn(true);
+          } catch (error) {
+            console.error('Login error:', error);
+            setAlerts('Failed to connect to server');
+            setTimeout(() => setAlerts(''), 5000);
           }
         }
 
