@@ -5,14 +5,23 @@ const { spawn } = require('child_process');
 const path = require('path');
 require('dotenv').config();
 
+const authRoutes = require('./routes/auth');
+const dashboardRoutes = require('./routes/dashboard');
+
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 const PORT = process.env.PORT || 3000;
 
+app.use(express.json());
+
 // Serve static frontend files
 app.use(express.static(path.join(__dirname, '../frontend')));
+
+// API routes
+app.use('/api/auth', authRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 // Simple API endpoint to check server status
 app.get('/api/status', (req, res) => {
