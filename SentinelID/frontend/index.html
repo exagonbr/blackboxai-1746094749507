@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SentinelID - Real-Time Face Detection</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white font-sans">
+  <header class="p-4 bg-gray-800 flex items-center justify-between">
+    <h1 class="text-2xl font-semibold">SentinelID</h1>
+    <div id="alerts" class="text-red-500 font-bold"></div>
+  </header>
+
+  <main class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <!-- Camera feeds will be dynamically added here -->
+  </main>
+
+  <script>
+    // Placeholder for camera feeds and alerts
+    const main = document.querySelector('main');
+    const alerts = document.getElementById('alerts');
+
+    // Example function to add a camera feed element
+    function addCameraFeed(id, streamUrl) {
+      const container = document.createElement('div');
+      container.className = 'bg-gray-800 rounded shadow p-2';
+
+      const video = document.createElement('video');
+      video.src = streamUrl;
+      video.autoplay = true;
+      video.muted = true;
+      video.controls = true;
+      video.className = 'w-full rounded';
+
+      container.appendChild(video);
+      main.appendChild(container);
+    }
+
+    // Example: Add a dummy camera feed (replace with real streams)
+    addCameraFeed('cam1', 'https://www.w3schools.com/html/mov_bbb.mp4');
+
+    // WebSocket for real-time alerts
+    const ws = new WebSocket(`ws://${window.location.host}`);
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.alert) {
+        alerts.textContent = data.alert;
+        setTimeout(() => { alerts.textContent = ''; }, 5000);
+      }
+    };
+  </script>
+</body>
+</html>
